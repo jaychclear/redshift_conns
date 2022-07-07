@@ -1,17 +1,28 @@
 import redshift_connector
+import configparser
+import os
 
-def get_conn(): 
+configParser = configparser.RawConfigParser()
+if os.getlogin() == 'jaychoudhoury':
+    configFilePath = r'C:\Users\jaychoudhoury\creds.ini'
+    
+configParser.read(configFilePath)
+
+
+def get_conn(source='prd-gallium-redshift'):
+
+    rs_credentials = dict(configParser.items(source))
     
     conn = redshift_connector.connect(
         iam=True,
         ssl=True,
-        host='gallium-global-prd-redshift-monetise.c67tqkser81t.eu-west-1.redshift.amazonaws.com',
+        host=rs_credentials['host'],
         port=5439,
         database='prd',
         db_user='',
-        cluster_identifier='gallium-global-prd-redshift-monetise',
+        cluster_identifier=rs_credentials['cluster_identifier'],
         region='eu-west-1',
-        login_url='https://clearscore.okta-emea.com/home/clearscore_awsanalyticsgalliumglobalprdredshiftmonetise_1/0oa6h62xwaca5R7440i7/aln6h65hizqZZ8LYK0i7',
+        login_url=rs_credentials['login_url'],
         credentials_provider='BrowserSamlCredentialsProvider',
         user='',
         password=''
